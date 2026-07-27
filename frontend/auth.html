@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up - University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --primary: #0f766e; --primary-dark: #115e59; --primary-light: #ccfbf1; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      background: #f0faf9;
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .auth-left { display: none; }
+    }
+
+    /* ── Left Panel ── */
+    .auth-left {
+      background: linear-gradient(145deg, var(--primary-dark) 0%, #134e4a 100%);
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: center;
+      padding: 60px 56px;
+      position: relative; overflow: hidden;
+    }
+
+    .auth-left::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      top: -200px; right: -200px;
+    }
+
+    .auth-left::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+      bottom: -100px; left: -100px;
+    }
+
+    .auth-brand {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 56px;
+    }
+
+    .auth-brand-name {
+      font-size: 2.7rem; font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.3;
+      max-width: 460px;
+    }
+
+    .auth-left h2 {
+      font-size: 2.2rem; font-weight: 800;
+      color: white; letter-spacing: -1px;
+      line-height: 1.2; margin-bottom: 16px;
+    }
+
+    .auth-left p {
+      color: rgba(255,255,255,0.65);
+      font-size: 1rem; line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 340px;
+    }
+
+    .auth-features { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .auth-features li {
+      display: flex; align-items: center; gap: 12px;
+      color: rgba(255,255,255,0.75); font-size: 0.875rem; font-weight: 500;
+    }
+    .auth-features li span.check {
+      width: 24px; height: 24px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; color: white;
+      flex-shrink: 0;
+    }
+
+    /* ── Right Panel ── */
+    .auth-right {
+      background: white;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 48px 40px;
+      overflow-y: auto;
+      border-left: 1px solid #e5e7eb;
+    }
+
+    .auth-right-inner { width: 100%; max-width: 360px; }
+
+    .auth-title {
+      font-size: 1.5rem; font-weight: 800;
+      color: #111827; letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.875rem; color: #6b7280;
+      margin-bottom: 28px;
+    }
+
+    /* Status box */
+    .status-box {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .status-error { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+    .status-success { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+
+    /* Form */
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+
+    .field-group { margin-bottom: 16px; }
+    .field-label {
+      display: block;
+      font-size: 0.75rem; font-weight: 700;
+      color: #374151; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .field-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #111827;
+      background: #fafafa;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .field-input:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(15,118,110,0.1);
+    }
+    .field-input::placeholder { color: #9ca3af; }
+
+    .field-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+
+    .field-row-full { grid-column: span 2; }
+
+    .form-options {
+      display: flex; justify-content: space-between;
+      align-items: center; margin: 16px 0;
+    }
+    .checkbox-group {
+      display: flex; align-items: center; gap: 8px;
+      color: #4b5563; font-size: 0.85rem; cursor: pointer;
+    }
+    .link-text {
+      color: var(--primary); font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; text-decoration: none;
+      background: none; border: none; font-family: inherit;
+    }
+    .link-text:hover { text-decoration: underline; }
+
+    .btn-submit {
+      width: 100%; padding: 12px;
+      background: var(--primary); color: white;
+      border: none; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      font-family: inherit; margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      color: #9ca3af; font-size: 0.8rem;
+      margin: 20px 0;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .google-btn {
+      width: 100%; padding: 11px;
+      background: white; color: #374151;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px; font-size: 0.875rem;
+      font-weight: 600; cursor: pointer;
+      display: flex; align-items: center;
+      justify-content: center; gap: 10px;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .google-btn:hover { border-color: #d1d5db; background: #f9fafb; }
+
+    .switch-row {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 0.875rem; color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left decorative panel -->
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="auth-brand-name">University Admission Support System 🎓</div>
+    </div>
+    <h2>Your admission<br>season, sorted.</h2>
+    <p>One login. Every university circular. Personalized to your profile — with alerts, calendar sync, and AI guidance.</p>
+    <ul class="auth-features">
+      <li><span class="check">✓</span> Personalized feed from EWU, BRACU, NSU, AIUB & more</li>
+      <li><span class="check">✓</span> Email alerts within 24h of new circulars</li>
+      <li><span class="check">✓</span> Auto-sync exam dates to Google Calendar</li>
+      <li><span class="check">✓</span> AI counselor for admission strategy</li>
+      <li><span class="check">✓</span> Track all applications in one dashboard</li>
+    </ul>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-right">
+    <div class="auth-right-inner">
+
+      <div id="statusBox" class="status-box"></div>
+
+      <!-- LOGIN -->
+      <div id="loginForm" class="auth-form active">
+        <div class="auth-title">Welcome back</div>
+        <div class="auth-subtitle">Log in to your account to continue</div>
+
+        <form id="emailLoginForm">
+          <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <input type="email" id="loginEmail" class="field-input" placeholder="you@example.com" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Password</label>
+            <input type="password" id="loginPassword" class="field-input" placeholder="••••••••" required>
+          </div>
+          <div class="form-options">
+            <label class="checkbox-group">
+              <input type="checkbox"> Remember me
+            </label>
+            <button type="button" class="link-text">Forgot password?</button>
+          </div>
+          <button type="submit" class="btn-submit">Log In</button>
+        </form>
+
+        <div class="divider">or</div>
+        <button type="button" class="google-btn" id="googleLoginBtn">
+          <img src="image/google.png" alt="Google" width="18" height="18">
+          Continue with Google
+        </button>
+
+        <div class="switch-row">
+          Don't have an account? <span class="link-text" id="switchToSignup">Sign up</span>
+        </div>
+      </div>
+
+      <!-- SIGNUP -->
+      <div id="signupForm" class="auth-form">
+        <div class="auth-title">Create account</div>
+        <div class="auth-subtitle">Start tracking your admission journey</div>
+
+        <form id="emailSignupForm">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Full Name</label>
+              <input type="text" id="regName" class="field-input" placeholder="Your name" required>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Phone Number</label>
+              <input type="tel" id="regPhone" class="field-input" placeholder="01XXXXXXXXX" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Date of Birth</label>
+              <input type="date" id="regDob" class="field-input" required>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Gender</label>
+              <select id="regGender" class="field-input" required>
+                <option value="" disabled selected>Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <input type="email" id="regEmail" class="field-input" placeholder="you@example.com" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Password (min 6 characters)</label>
+            <input type="password" id="regPassword" class="field-input" placeholder="Create a password" required>
+          </div>
+          <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+
+        <div class="divider">or</div>
+        <button type="button" class="google-btn" id="googleSignupBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/></svg>
+          Sign up with Google
+        </button>
+
+        <div class="switch-row">
+          Already have an account? <span class="link-text" id="switchToLogin">Log in</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtLmzt3a6LYxfnMTmX5BY9OPzIjiFFh64",
+      authDomain: "university-admission-support.firebaseapp.com",
+      projectId: "university-admission-support",
+      storageBucket: "university-admission-support.firebasestorage.app",
+      messagingSenderId: "169709812924",
+      appId: "1:169709812924:web:9ea1229de028b7b52264b9",
+      measurementId: "G-84VCKW9K9V"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    const statusBox = document.getElementById('statusBox');
+    function showMsg(msg, ok = false) {
+      statusBox.textContent = msg;
+      statusBox.className = 'status-box ' + (ok ? 'status-success' : 'status-error');
+      statusBox.style.display = 'block';
+    }
+    function clearMsg() { statusBox.style.display = 'none'; }
+
+    const loginF  = document.getElementById('loginForm');
+    const signupF = document.getElementById('signupForm');
+
+    document.getElementById('switchToSignup').onclick = () => { clearMsg(); loginF.classList.remove('active'); signupF.classList.add('active'); };
+    document.getElementById('switchToLogin').onclick  = () => { clearMsg(); signupF.classList.remove('active'); loginF.classList.add('active'); };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash === '#signup') document.getElementById('switchToSignup').click();
+    });
+
+    async function googleAuth() {
+      clearMsg();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        await setDoc(doc(db, "users", result.user.uid), { name: result.user.displayName || "User", email: result.user.email, role: "student" }, { merge: true });
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = 'preference.html';
+      } catch (e) {
+        if (e.code !== 'auth/popup-closed-by-user') showMsg(e.message);
+      }
+    }
+    document.getElementById('googleLoginBtn').onclick = googleAuth;
+    document.getElementById('googleSignupBtn').onclick = googleAuth;
+
+    document.getElementById('emailLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); clearMsg();
+      try {
+        const { user } = await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
+        if (!user.emailVerified) { showMsg("Email not verified. Check your inbox."); return; }
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = 'preference.html';
+      } catch (e) {
+        showMsg(e.code === 'auth/invalid-credential' ? "Invalid email or password." : e.message);
+      }
+    });
+
+    document.getElementById('emailSignupForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); clearMsg();
+      const name = document.getElementById('regName').value;
+      const phone = document.getElementById('regPhone').value;
+      if (name.trim().length < 3) { showMsg("Name must be at least 3 characters."); return; }
+      if (!/^(?:\+88|88)?(01[3-9]\d{8})$/.test(phone.replace(/[-\s]/g, ''))) { showMsg("Enter a valid Bangladeshi phone number."); return; }
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPassword').value);
+        await setDoc(doc(db, "users", user.uid), { name, email: document.getElementById('regEmail').value, phone, dob: document.getElementById('regDob').value, gender: document.getElementById('regGender').value, role: "student" });
+        await sendEmailVerification(user);
+        showMsg("Verification email sent! Check your inbox before logging in.", true);
+        setTimeout(() => { document.getElementById('switchToLogin').click(); }, 2500);
+      } catch (e) {
+        showMsg(e.code === 'auth/email-already-in-use' ? "Email already registered." : e.code === 'auth/weak-password' ? "Password must be at least 6 characters." : e.message);
+      }
+    });
+  </script>
+</body>
+</html>
