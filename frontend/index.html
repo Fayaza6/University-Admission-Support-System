@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #0f766e; --primary-dark: #115e59;
+      --primary-light: #ccfbf1; --text: #111827;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+    
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Navbar ── */
+    .landing-nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(14,81,75,0.08);
+      z-index: 100;
+    }
+    .brand {
+      font-size: 1rem; font-weight: 700;
+      color: var(--primary-dark); letter-spacing: -0.3px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .brand-icon { font-size: 1.4rem; }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .btn-nav {
+      padding: 8px 20px; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 600;
+      text-decoration: none; transition: all 0.2s;
+      cursor: pointer; border: none; font-family: inherit;
+    }
+    .btn-nav-ghost {
+      background: transparent; color: var(--primary-dark);
+      border: 1.5px solid rgba(14,81,75,0.3);
+    }
+    .btn-nav-ghost:hover { border-color: var(--primary); background: var(--primary-light); }
+    .btn-nav-solid {
+      background: var(--primary); color: white;
+    }
+    .btn-nav-solid:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+      background:
+        
+      linear-gradient(rgba(240, 250, 249, 0.55), rgba(255, 255, 255, 0.9)), 
+      url('image/uni.webp');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15,118,110,0.06) 0%, transparent 70%);
+      top: -200px; right: -200px;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .highlight {
+      color: var(--primary);
+      position: relative;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #4b5563;
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex; gap: 14px; align-items: center; flex-wrap: wrap; justify-content: center;
+    }
+
+    .btn-hero-primary {
+      padding: 14px 32px;
+      background: var(--primary); color: white;
+      border-radius: 10px; font-size: 1rem;
+      font-weight: 700; text-decoration: none;
+      transition: all 0.2s; border: none; cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 4px 14px rgba(15,118,110,0.35);
+    }
+    .btn-hero-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,118,110,0.4); }
+
+    .btn-hero-ghost {
+      padding: 14px 32px;
+      background: white; color: var(--text);
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px; font-size: 1rem;
+      font-weight: 600; text-decoration: none;
+      transition: all 0.2s; cursor: pointer; font-family: inherit;
+    }
+    .btn-hero-ghost:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+    /* ── Features ── */
+    .features {
+      padding: 80px 48px;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .features-header {
+      text-align: center; margin-bottom: 52px;
+    }
+    .features-header h2 {
+      font-size: 2rem; font-weight: 800;
+      color: var(--text); letter-spacing: -0.8px;
+      margin-bottom: 10px;
+    }
+    .features-header p { color: #6b7280; font-size: 1rem; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px; max-width: 1000px; margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .landing-nav { padding: 0 20px; }
+      .features { padding: 60px 20px; }
+    }
+
+    .feature-card {
+      padding: 28px 24px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      transition: all 0.25s;
+      background: #fafafa;
+    }
+    .feature-card:hover { border-color: var(--primary); background: white; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: var(--primary-light);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .feature-card p { font-size: 0.875rem; color: #6b7280; line-height: 1.6; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      z-index: 500; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white; border-radius: 16px;
+      padding: 36px; max-width: 640px; width: 100%;
+      max-height: 80vh; overflow-y: auto;
+      position: relative;
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; font-size: 1.5rem;
+      color: #9ca3af; cursor: pointer; transition: color 0.2s;
+    }
+    .modal-close:hover { color: #ef4444; }
+    .modal-box h2 { font-size: 1.4rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 14px; }
+    .modal-box p { color: #4b5563; font-size: 0.9rem; line-height: 1.7; margin-bottom: 14px; }
+    .modal-box ul { padding-left: 20px; color: #4b5563; font-size: 0.875rem; line-height: 1.8; }
+    .modal-box ul li { margin-bottom: 6px; }
+
+    /* ── Stats strip ── */
+    .stats-strip {
+      background: var(--primary);
+      padding: 32px 48px;
+      display: flex; align-items: center; justify-content: center; gap: 60px;
+      flex-wrap: wrap;
+    }
+    .strip-stat { text-align: center; }
+    .strip-stat .num { font-size: 2rem; font-weight: 800; color: white; letter-spacing: -1px; }
+    .strip-stat .lbl { font-size: 0.8rem; color: rgba(255,255,255,0.7); font-weight: 500; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+  <nav class="landing-nav">
+    <div class="brand">
+      <span class="brand-icon">🎓</span>
+      Admission Support System
+    </div>
+    <div class="nav-actions">
+      <a href="auth.html" class="btn-nav btn-nav-ghost">Log In</a>
+      <a href="auth.html#signup" class="btn-nav btn-nav-solid">Get Started</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">🇧🇩 Built for Bangladesh Students</div>
+    <h1>Your <span class="highlight">Admission Journey</span>,<br>Simplified</h1>
+    <p>Track circulars from different Universities — all in one place. Get alerts, sync exams to your calendar, and get AI guidance.</p>
+    <div class="hero-actions">
+      <a href="auth.html#signup" class="btn-hero-primary">Start for Free →</a>
+      <button class="btn-hero-ghost" onclick="document.getElementById('modal').classList.add('open')">Learn More</button>
+    </div>
+  </section>
+
+  <div class="stats-strip">
+    <div class="strip-stat"><div class="num">4+</div><div class="lbl">Universities Tracked</div></div>
+    <div class="strip-stat"><div class="num">50+</div><div class="lbl">Programs Listed</div></div>
+    <div class="strip-stat"><div class="num">24h</div><div class="lbl">Alert Delivery</div></div>
+    <div class="strip-stat"><div class="num">AI</div><div class="lbl">Powered Guidance</div></div>
+  </div>
+
+  <section class="features">
+    <div class="features-header">
+      <h2>Everything you need for admission season</h2>
+      <p>Stop checking 20 websites. We do it for you.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Smart Circular Feed</h3>
+        <p>Set your preferences once. Get a personalized feed of only the circulars that match your GPA, group, and preferred programs.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Instant Email Alerts</h3>
+        <p>The moment a new circular drops that matches your profile, we send you an email with the deadline and direct apply link.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Google Calendar Sync</h3>
+        <p>Mark a university as Applied and the exam date is automatically added to your Google Calendar with a 3-day reminder.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Application Tracker</h3>
+        <p>Track every application from Applied → Exam → Result → Admitted. A visual journey timeline for each university.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Admission Counselor</h3>
+        <p>Chat with our AI that knows your profile and the live circular data. Get a personalized strategy with Reach, Target, and Safety picks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h3>University Map & Info</h3>
+        <p>View campus locations on a map, compare programs side by side, and check seat availability at a glance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+      <h2>About the Platform</h2>
+      <p>Every admission season in Bangladesh, HSC graduates are forced to monitor 20+ university websites simultaneously. Missing a deadline means missing an opportunity — just because of scattered, inconsistent information.</p>
+      <p>The <strong>University Admission Support System</strong> solves this by aggregating all admission circulars into one intelligent, personalized interface.</p>
+      <p><strong>What we cover:</strong></p>
+      <ul>
+        <li>Personalized circular feed matched to your GPA, group, and preferences</li>
+        <li>Automated email alerts the moment matching circulars are published</li>
+        <li>Application tracker with a full journey timeline per university</li>
+        <li>Google Calendar auto-sync for exam dates</li>
+        <li>AI counselor that gives you a real strategy — not generic advice</li>
+        <li>Seat availability visualization and university comparison</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>

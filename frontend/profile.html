@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>if(localStorage.getItem('theme')==='dark'){document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('dark-mode'));}</script>
+</head>
+<body>
+
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+      <span class="nav-brand">Admission Support System</span>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-icon-btn">🔔</a>
+      <a href="profile.html" class="nav-avatar">👤</a>
+      <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('isLoggedIn')">⎋ Logout</a>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="preference.html"><span class="s-icon">🎯</span><span class="s-label">Preferences</span></a></li>
+      <li><a href="profile.html" class="active"><span class="s-icon">👤</span><span class="s-label">Profile</span></a></li>
+      <li><a href="newsfeed.html"><span class="s-icon">📰</span><span class="s-label">Newsfeed</span></a></li>
+      <li><a href="dashboard.html"><span class="s-icon">📊</span><span class="s-label">Dashboard</span></a></li>
+      <li><a href="settings.html"><span class="s-icon">⚙️</span><span class="s-label">Settings</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content" id="mainContent">
+
+    <div class="page-header">
+      <h2>Student Profile</h2>
+      <p>Your academic information and admission preferences</p>
+    </div>
+    <hr class="divider-line">
+
+    <div class="profile-wrap">
+
+      <!-- Left: Main Info Card -->
+      <div class="profile-main-card">
+        <h2>Personal Information</h2>
+
+        <div class="profile-info-grid">
+          <div class="profile-info-item">
+            <label>Full Name</label>
+            <p id="fullName">—</p>
+          </div>
+          <div class="profile-info-item">
+            <label>Date of Birth</label>
+            <p id="dob">—</p>
+          </div>
+          <div class="profile-info-item">
+            <label>Gender</label>
+            <p id="gender">—</p>
+          </div>
+          <div class="profile-info-item">
+            <label>Phone Number</label>
+            <p id="phoneNumber">—</p>
+          </div>
+          <div class="profile-info-item" style="grid-column:span 2;">
+            <label>Email Address</label>
+            <p id="emailId">—</p>
+          </div>
+        </div>
+
+        <!-- SSC -->
+        <div class="academic-box">
+          <h3>SSC / Equivalent</h3>
+          <div class="academic-grid">
+            <div class="academic-item">
+              <label>Category</label>
+              <p id="sscCategory">—</p>
+            </div>
+            <div class="academic-item">
+              <label>GPA</label>
+              <p id="sscGpa">—</p>
+            </div>
+            <div class="academic-item">
+              <label>Passing Year</label>
+              <p id="sscYear">—</p>
+            </div>
+            <div class="academic-item">
+              <label>Roll Number</label>
+              <p id="sscRoll">—</p>
+            </div>
+            <div class="academic-item">
+              <label>Registration No.</label>
+              <p id="sscReg">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HSC -->
+        <div class="academic-box">
+          <h3>HSC / Equivalent</h3>
+          <div class="academic-grid">
+            <div class="academic-item">
+              <label>Category</label>
+              <p id="hscCategory">—</p>
+            </div>
+            <div class="academic-item">
+              <label>GPA</label>
+              <p id="hscGpa">—</p>
+            </div>
+            <div class="academic-item">
+              <label>Passing Year</label>
+              <p id="hscYear">—</p>
+            </div>
+            <div class="academic-item">
+              <label>Roll Number</label>
+              <p id="hscRoll">—</p>
+            </div>
+            <div class="academic-item">
+              <label>Registration No.</label>
+              <p id="hscReg">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admission Preference -->
+        <div class="academic-box" style="margin-bottom:0;">
+          <h3>Admission Preference</h3>
+          <div class="academic-grid" style="grid-template-columns:1fr;">
+            <div class="academic-item">
+              <label>University Type</label>
+              <p id="admissionPref">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <a href="preference.html" class="btn-primary">✏️ Edit Preferences</a>
+        </div>
+      </div>
+
+      <!-- Right: Image Card -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <div class="profile-image-card">
+          <div class="profile-img-wrap" id="imgWrap">
+            <span id="avatarInitial">?</span>
+            <img id="profileImg" src="" alt="Profile">
+          </div>
+          <div class="profile-name-display" id="displayName">Loading...</div>
+          <div class="profile-email-display" id="displayEmail">—</div>
+          <label for="imageUpload" class="upload-label">📷 Upload Photo</label>
+          <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="previewImage(event)">
+        </div>
+
+        <!-- Quick Stats Card -->
+        <div class="card">
+          <div class="card-title">Quick Stats</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.85rem;color:var(--text-secondary);">Universities Applied</span>
+              <span class="badge badge-blue" id="statApplied">0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.85rem;color:var(--text-secondary);">Upcoming Exams</span>
+              <span class="badge badge-orange" id="statExams">0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.85rem;color:var(--text-secondary);">Results Out</span>
+              <span class="badge badge-green" id="statResults">0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.85rem;color:var(--text-secondary);">New Circulars</span>
+              <span class="badge badge-red" id="statNew">0</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <a href="dashboard.html" class="btn-outline" style="width:100%;justify-content:center;">View Dashboard →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+        <script>
+        function toggleSidebar() {
+          document.getElementById('sidebar').classList.toggle('collapsed');
+          document.getElementById('mainContent').classList.toggle('expanded');
+        }
+
+        function previewImage(e) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const img = document.getElementById('profileImg');
+            img.src = reader.result;
+            img.style.display = 'block';
+            document.getElementById('avatarInitial').style.display = 'none';
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        }
+
+        // Quick Stats Auto Update Function
+        function loadQuickStats() {
+          const applications = JSON.parse(localStorage.getItem('myApplications')) || [];
+          let exams = 0;
+          let results = 0;
+
+          applications.forEach(app => {
+            if (app.status === 'Exam Pending') exams++;
+            if (app.status === 'Result Out') results++;
+          });
+
+          const newCircs = parseInt(localStorage.getItem('newCircularsCount') || 0);
+
+          // Update Text Content
+          if (document.getElementById('statApplied')) document.getElementById('statApplied').textContent = applications.length;
+          if (document.getElementById('statExams')) document.getElementById('statExams').textContent = exams;
+          if (document.getElementById('statResults')) document.getElementById('statResults').textContent = results;
+          if (document.getElementById('statNew')) document.getElementById('statNew').textContent = newCircs;
+        }
+
+        // Load stats on page initialization
+        document.addEventListener('DOMContentLoaded', loadQuickStats);
+      </script>
+  <script type="module" src="profile.js"></script>
+</body>
+</html>

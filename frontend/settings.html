@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>if(localStorage.getItem('theme')==='dark'){document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('dark-mode'));}</script>
+  <script type="module" src="avatar.js"></script>
+</head>
+<body>
+
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+      <span class="nav-brand">Admission Support System</span>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-icon-btn">🔔</a>
+      <a href="profile.html" class="nav-avatar">👤</a>
+      <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('isLoggedIn')">⎋ Logout</a>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="preference.html"><span class="s-icon">🎯</span><span class="s-label">Preferences</span></a></li>
+      <li><a href="profile.html"><span class="s-icon">👤</span><span class="s-label">Profile</span></a></li>
+      <li><a href="newsfeed.html"><span class="s-icon">📰</span><span class="s-label">Newsfeed</span></a></li>
+      <li><a href="dashboard.html"><span class="s-icon">📊</span><span class="s-label">Dashboard</span></a></li>
+      <li><a href="settings.html" class="active"><span class="s-icon">⚙️</span><span class="s-label">Settings</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content" id="mainContent">
+
+    <div class="page-header">
+      <h2>Account Settings</h2>
+      <p>Manage your password, notifications, and app preferences</p>
+    </div>
+    <hr class="divider-line">
+
+    <div class="settings-wrap">
+
+      <!-- Change Password -->
+      <div class="settings-section">
+        <h3>🔒 Change Password</h3>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" id="curPwd" class="form-input" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" id="newPwd" class="form-input" placeholder="Enter new password (min 6 chars)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" id="confPwd" class="form-input" placeholder="Re-enter new password">
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn-submit" onclick="changePassword()">Update Password</button>
+        </div>
+        <div id="pwdMsg" style="margin-top:12px;display:none;font-size:0.85rem;font-weight:600;padding:10px 14px;border-radius:8px;"></div>
+      </div>
+
+      <!-- Notification Preferences -->
+      <div class="settings-section">
+        <h3>🔔 Notification Preferences</h3>
+
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <strong>Admission Deadline Alerts</strong>
+            <span>Get notified 3 days before application deadlines close</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-deadline" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <strong>New Circular Email Alerts</strong>
+            <span>Email when a new circular matches your preferences</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-email" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <strong>Result Published Alerts</strong>
+            <span>Email when a result is published for universities you applied to</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-result" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <strong>Exam Date Reminders</strong>
+            <span>Google Calendar events auto-created for your exam dates</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-calendar" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- App Customization -->
+      <div class="settings-section">
+        <h3>🎨 App Customization</h3>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select class="form-select" id="langSelect">
+              <option value="en" selected>English</option>
+              <option value="bn">বাংলা (Bangla)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Theme</label>
+            <select class="form-select" id="themeSelect" onchange="applyTheme(this.value)">
+              <option value="light" selected>Light (Default)</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+   
+      <div class="settings-section" style="border-color:#fca5a5;">
+        <h3 style="color:var(--danger);">⚠️ Danger Zone</h3>
+        <div class="toggle-row" style="border:none;padding-top:0;">
+          <div class="toggle-label-wrap">
+            <strong>Delete Account</strong>
+            <span>Permanently delete your account and all data. This cannot be undone.</span>
+          </div>
+          <button onclick="confirmDelete()" style="background:#fee2e2;color:var(--danger);border:1px solid #fca5a5;
+          padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;
+          font-family:inherit;transition:all 0.2s;" onmouseover="this.style.background='#fca5a5'" 
+          onmouseout="this.style.background='#fee2e2'">Delete Account</button>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn-submit" onclick="saveSettings()">💾 Save All Changes</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('mainContent').classList.toggle('expanded');
+    }
+
+    function showPwdMsg(msg, ok) {
+      const el = document.getElementById('pwdMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      el.style.background = ok ? '#dcfce7' : '#fee2e2';
+      el.style.color = ok ? '#15803d' : '#dc2626';
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    function changePassword() {
+      const cur = document.getElementById('curPwd').value;
+      const nw  = document.getElementById('newPwd').value;
+      const cf  = document.getElementById('confPwd').value;
+      if (!cur || !nw || !cf) { showPwdMsg('Please fill all password fields.'); return; }
+      if (nw.length < 6) { showPwdMsg('New password must be at least 6 characters.'); return; }
+      if (nw !== cf) { showPwdMsg('Passwords do not match.'); return; }
+
+      // Firebase password update
+      showPwdMsg('Password updated successfully!', true);
+      document.getElementById('curPwd').value = '';
+      document.getElementById('newPwd').value = '';
+      document.getElementById('confPwd').value = '';
+    }
+
+    function saveSettings() {
+      const theme = document.getElementById('themeSelect').value;
+      const prefs = {
+        deadlineAlerts: document.getElementById('toggle-deadline').checked,
+        emailAlerts:    document.getElementById('toggle-email').checked,
+        resultAlerts:   document.getElementById('toggle-result').checked,
+        calendarSync:   document.getElementById('toggle-calendar').checked,
+        language:       document.getElementById('langSelect').value,
+        theme:          theme,
+      };
+      localStorage.setItem('appSettings', JSON.stringify(prefs));
+      applyTheme(theme);
+      alert('Settings saved!');
+    }
+
+    function applyTheme(t) {
+      if (t === 'dark') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+      localStorage.setItem('theme', t);
+    }
+
+    function confirmDelete() {
+      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        alert('Account deletion would be processed here via Firebase.');
+      }
+    }
+
+    // Load saved settings
+    window.onload = () => {
+      const saved = JSON.parse(localStorage.getItem('appSettings') || '{}');
+      if (saved.deadlineAlerts !== undefined) document.getElementById('toggle-deadline').checked = saved.deadlineAlerts;
+      if (saved.emailAlerts    !== undefined) document.getElementById('toggle-email').checked    = saved.emailAlerts;
+      if (saved.resultAlerts   !== undefined) document.getElementById('toggle-result').checked   = saved.resultAlerts;
+      if (saved.calendarSync   !== undefined) document.getElementById('toggle-calendar').checked = saved.calendarSync;
+      const savedTheme = localStorage.getItem('theme') || saved.theme || 'light';
+      document.getElementById('themeSelect').value = savedTheme;
+      applyTheme(savedTheme);
+      if (saved.language) document.getElementById('langSelect').value = saved.language;
+    };
+  </script>
+  
+</body>
+</html>

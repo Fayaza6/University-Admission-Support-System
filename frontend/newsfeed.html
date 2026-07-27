@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsfeed - University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>if(localStorage.getItem('theme')==='dark'){document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('dark-mode'));}</script>
+  <script type="module" src="avatar.js"></script>
+
+</head>
+<body>
+
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+      <span class="nav-brand">Admission Support System</span>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-icon-btn" title="Notifications">🔔</a>
+      <a href="profile.html" class="nav-avatar" title="Profile">👤</a>
+      <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('isLoggedIn')">⎋ Logout</a>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="preference.html"><span class="s-icon">🎯</span><span class="s-label">Preferences</span></a></li>
+      <li><a href="profile.html"><span class="s-icon">👤</span><span class="s-label">Profile</span></a></li>
+      <li><a href="newsfeed.html" class="active"><span class="s-icon">📰</span><span class="s-label">Newsfeed</span></a></li>
+      <li><a href="dashboard.html"><span class="s-icon">📊</span><span class="s-label">Dashboard</span></a></li>
+      <li><a href="settings.html"><span class="s-icon">⚙️</span><span class="s-label">Settings</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content" id="mainContent">
+
+    <div class="page-header">
+      <div class="search-bar-wrap">
+        <div>
+          <h2>University Newsfeed</h2>
+          <p>Live admission circulars from universities across Bangladesh</p>
+        </div>
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchBox" class="search-input" placeholder="Search universities..." oninput="filterCards()">
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- University Cards Grid -->
+    <div class="uni-grid" id="universityGrid">
+      <div class="empty-state">
+        <div class="empty-icon">⏳</div>
+        <p>Loading admission data...</p>
+      </div>
+    </div>
+
+    <!-- Program Detail Panel -->
+    <div class="dept-section" id="deptSection">
+      <div class="dept-section-header">
+        <h3 id="deptTitle">Programs</h3>
+        <button class="close-btn-sm" onclick="closeDept()">✕ Close</button>
+      </div>
+      <div class="dept-grid" id="deptGrid"></div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('mainContent').classList.toggle('expanded');
+    }
+
+    let admissionData = { universities: [] };
+
+    async function fetchData() {
+      try {
+        const res = await fetch("https://python-uniadmissiondata-scraper.onrender.com/api/admissions");
+        if (!res.ok) throw new Error(res.status);
+        const json = await res.json();
+        admissionData.universities = json.data.universities;
+        renderCards();
+      } catch (e) {
+        document.getElementById('universityGrid').innerHTML = `
+          <div style="grid-column:1/-1;">
+            <div class="error-msg">❌ Failed to load data. Please try again later.</div>
+          </div>`;
+      }
+    }
+
+    function getStatusBadge(status) {
+      if (!status || status === 'Unknown') return '<span class="badge badge-gray">Unknown</span>';
+      if (status === 'Open') return '<span class="badge badge-green">● Open</span>';
+      return '<span class="badge badge-red">● Closed</span>';
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('universityGrid');
+      if (!admissionData.universities.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🏛️</div><p>No universities found.</p></div>';
+        return;
+      }
+      grid.innerHTML = admissionData.universities.map((uni, i) => {
+        const first = uni.admission[0] || {};
+        const status = first.status || 'Unknown';
+        const logo = `image/${uni.short.toLowerCase()}.png`;
+        return `
+          <div class="uni-card" id="uc-${i}">
+            <div class="uni-card-header">
+              <div class="uni-logo-wrap" >
+                <img src="${logo}" alt="${uni.short}" onerror="this.style.display='none';this.parentElement.textContent='${uni.short}'">
+              </div>
+              <div class="uni-name-block">
+                <h3>${uni.university}</h3>
+                <div class="status-badge-wrap" style="align-self: flex-end; margin-top: 4px;">
+                      ${getStatusBadge(status)}
+                </div>
+              </div>
+            </div>
+            <div class="uni-details">
+              <div class="uni-detail-row">
+                <span class="label">Session</span>
+                <span class="value">${first.session || 'N/A'}</span>
+              </div>
+              <div class="uni-detail-row">
+                <span class="label">Deadline</span>
+                <span class="value">${first.deadline || 'N/A'}</span>
+              </div>
+              <div class="uni-detail-row">
+                <span class="label">Programs</span>
+                <span class="value">${uni.admission.length} programs</span>
+              </div>
+              <div class="uni-detail-row">
+                <span class="label">Location</span>
+                <span class="value">${uni.location || 'N/A'}</span>
+              </div>
+            </div>
+            <div class="uni-card-footer" style="display: flex; justify-content: center; width: 100%;">
+                <button class="btn-primary" style="width: 100%; display: flex; justify-content: center; align-items: center; text-align: center;" onclick="viewDetails(${i})">
+                  View Programs
+                </button>
+              </div>
+          </div>`;
+      }).join('');
+    }
+
+
+
+
+    function viewDetails(i) {
+        const uni = admissionData.universities[i];
+        document.getElementById('deptTitle').textContent = `${uni.university} — Available Programs`;
+        document.getElementById('deptGrid').innerHTML = uni.admission.map((p, pIndex) => {
+          const req = p.requirements || {};
+          return `
+            <div class="dept-card">
+              <h4>${p.program}</h4>
+              <p><strong>Deadline:</strong> ${p.deadline || 'N/A'}</p>
+              <p><strong>Exam:</strong> ${p.testDate || 'N/A'}</p>
+              ${req.group ? `<p><strong>Group:</strong> ${req.group}</p>` : ''}
+              ${req.minSSCGPA ? `<p><strong>Min SSC GPA:</strong> ${req.minSSCGPA} &nbsp;|&nbsp; <strong>HSC:</strong> ${req.minHSCGPA}</p>` : ''}
+              ${p.slot && p.slot !== 'N/A' ? `<p><strong>Slot:</strong> ${p.slot}</p>` : ''}
+              
+              <!-- Apply Now বাটন যা ক্লিক করলে লিংকেও যাবে এবং Dashboard এও সেভ হবে -->
+              <button type="button" class="apply-link" style="border:none; cursor:pointer;" onclick="applyToUni(${i}, ${pIndex})">Apply Now ↗</button>
+            </div>`;
+        }).join('');
+        const sec = document.getElementById('deptSection');
+        sec.style.display = 'block';
+        setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+
+      
+    function closeDept() {
+      document.getElementById('deptSection').style.display = 'none';
+    }
+
+    function filterCards() {
+      const q = document.getElementById('searchBox').value.toLowerCase();
+      admissionData.universities.forEach((uni, i) => {
+        const card = document.getElementById(`uc-${i}`);
+        if (!card) return;
+        const match = uni.university.toLowerCase().includes(q) || uni.short.toLowerCase().includes(q);
+        card.style.display = match ? '' : 'none';
+      });
+    }
+
+
+
+          function applyToUni(uniIndex, progIndex) {
+            const uni = admissionData.universities[uniIndex];
+            const p = uni.admission[progIndex];
+
+            let apps = JSON.parse(localStorage.getItem('myApplications')) || [];
+            const exists = apps.some(a => a.uni === uni.university && a.program === p.program);
+
+            if (!exists) {
+              const today = new Date();
+              const deadlineDate = p.deadline ? new Date(p.deadline) : null;
+              
+           
+              let initialStatus = 'Applied';
+              if (deadlineDate && today > deadlineDate) {
+                initialStatus = 'Exam Pending';
+              }
+
+              apps.push({
+                uni: uni.university,
+                short: uni.short || uni.university.substring(0, 4).toUpperCase(),
+                program: p.program,
+                deadline: p.deadline || '',
+                examDate: p.testDate || 'TBA',
+                status: initialStatus
+              });
+
+              localStorage.setItem('myApplications', JSON.stringify(apps));
+            }
+
+            let url = p.applyLink;
+            if (url && url !== '#') {
+              if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+              }
+              window.open(url, '_blank');
+            } else {
+              alert('Apply link not available!');
+            }
+          }
+            
+
+    window.onload = fetchData;
+  </script>
+ 
+</body>
+</html>
