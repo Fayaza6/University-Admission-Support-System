@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>if(localStorage.getItem('theme')==='dark'){document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('dark-mode'));}</script>
+  <script type="module" src="avatar.js"></script>
+</head>
+<body>
+
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+      <span class="nav-brand">Admission Support System</span>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-icon-btn" title="Notifications">🔔</a>
+      <a href="profile.html" class="nav-avatar" title="Profile">👤</a>
+      <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('isLoggedIn')">⎋ Logout</a>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="preference.html"><span class="s-icon">🎯</span><span class="s-label">Preferences</span></a></li>
+      <li><a href="profile.html"><span class="s-icon">👤</span><span class="s-label">Profile</span></a></li>
+      <li><a href="newsfeed.html"><span class="s-icon">📰</span><span class="s-label">Newsfeed</span></a></li>
+      <li><a href="dashboard.html" class="active"><span class="s-icon">📊</span><span class="s-label">Dashboard</span></a></li>
+      <li><a href="settings.html"><span class="s-icon">⚙️</span><span class="s-label">Settings</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content" id="mainContent">
+
+    <div class="page-header">
+      <h2>Dashboard</h2>
+      <p>Your admission season at a glance</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})">
+        <div class="stat-icon blue">🎓</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statApplied">0</div>
+          <div class="stat-label">Universities Applied</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})">
+        <div class="stat-icon orange">📅</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statExams">0</div>
+          <div class="stat-label">Upcoming Exams</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="document.getElementById('trackerSection').scrollIntoView({behavior:'smooth'})">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statResults">0</div>
+          <div class="stat-label">Results Out</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="window.location.href='newsfeed.html'">
+        <div class="stat-icon red">🔔</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statNew">0</div>
+          <div class="stat-label">New Circulars</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Tracker -->
+    <div id="trackerSection">
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--text-primary)">Application Tracker</h3>
+      </div>
+
+      <div class="empty-state" id="trackerEmpty" style="display:none; padding: 40px 0; text-align: center;">
+        <div class="empty-icon">📋</div>
+        <p>No applications yet. Browse circulars and mark universities as Applied.</p>
+        <br>
+        <a href="newsfeed.html" class="btn-primary" style="margin-top:8px; display:inline-block;">Browse Circulars</a>
+      </div>
+
+      <div class="tracker-list" id="trackerList"></div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('mainContent').classList.toggle('expanded');
+    }
+
+    // --- Counter animation ---
+    function countUp(el, target) {
+      if (!el) return;
+      let cur = 0;
+      const step = Math.max(1, Math.ceil(target / 20));
+      const t = setInterval(() => {
+        cur = Math.min(cur + step, target);
+        el.textContent = cur;
+        if (cur >= target) clearInterval(t);
+      }, 40);
+    }
+
+    function getStatusBadge(s) {
+      const map = {
+        "Applied": "badge-blue",
+        "Exam Pending": "badge-orange",
+        "Exam Attended": "badge-blue",
+        "Result Pending": "badge-gray",
+        "Result Out": "badge-green",
+        "Admitted": "badge-green",
+        "Not Selected": "badge-red",
+      };
+      return map[s] || "badge-gray";
+    }
+
+    const journeySteps = ["Applied", "Exam Pending", "Exam Attended", "Result Pending", "Result Out", "Admitted"];
+
+    
+    function checkAndUpdateDeadlines(applications) {
+      const today = new Date();
+      let updated = false;
+
+      applications.forEach(app => {
+        if (app.deadline && app.status === 'Applied') {
+          const deadlineDate = new Date(app.deadline);
+          if (today > deadlineDate) {
+            app.status = 'Exam Pending';
+            updated = true;
+          }
+        }
+      });
+
+      if (updated) {
+        localStorage.setItem('myApplications', JSON.stringify(applications));
+      }
+      return applications;
+    }
+
+    
+    function renderTracker() {
+      let applications = JSON.parse(localStorage.getItem('myApplications')) || [];
+      
+      
+      applications = checkAndUpdateDeadlines(applications);
+
+      const list = document.getElementById('trackerList');
+      const empty = document.getElementById('trackerEmpty');
+
+      let exams = 0, results = 0;
+
+    
+      if (!applications.length) { 
+        if (empty) empty.style.display = 'block';
+        if (list) list.innerHTML = '';
+        countUp(document.getElementById('statApplied'), 0);
+        countUp(document.getElementById('statExams'), 0);
+        countUp(document.getElementById('statResults'), 0);
+        countUp(document.getElementById('statNew'), parseInt(localStorage.getItem('newCircularsCount') || 0));
+        return; 
+      }
+
+      if (empty) empty.style.display = 'none';
+
+      list.innerHTML = applications.map((app, i) => {
+        const curStep = journeySteps.indexOf(app.status || "Applied");
+        const logo = `image/${app.short.toLowerCase()}.png`;
+        
+        if (app.status === 'Exam Pending') exams++;
+        if (app.status === 'Result Out') results++;
+
+        const journeyHTML = journeySteps.map((step, si) => {
+          const cls = si < curStep ? 'done' : si === curStep ? 'current' : '';
+          return `<div class="journey-step ${cls}">
+            <div class="journey-dot">${si < curStep ? '✓' : si + 1}</div>
+            <div class="journey-label">${step.replace(' ', '<br>')}</div>
+          </div>`;
+        }).join('');
+
+        return `
+          <div class="tracker-item" style="flex-direction:column;align-items:stretch;gap:14px;padding:18px 20px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="tracker-logo">
+                <img src="${logo}" alt="${app.short}" onerror="this.style.display='none';this.parentElement.textContent='${app.short || 'UNI'}'">
+               </div>
+              <div class="tracker-info" style="flex:1;">
+                <h4>${app.uni}</h4>
+                <p>${app.program || ''} · Exam: ${app.examDate || 'TBA'}</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                <span class="badge ${getStatusBadge(app.status || 'Applied')}">${app.status || 'Applied'}</span>
+                <select class="status-select" onchange="updateStatus(${i}, this.value)">
+                  ${journeySteps.map(s => `<option value="${s}" ${s === app.status ? 'selected' : ''}>${s}</option>`).join('')}
+                  <option value="Delete Application" style="color: red; font-weight: bold;">Delete Application</option>
+                </select>
+              </div>
+            </div>
+            <div class="journey-timeline">${journeyHTML}</div>
+          </div>`;
+      }).join('');
+
+      
+      const newCircs = parseInt(localStorage.getItem('newCircularsCount') || 0);
+      countUp(document.getElementById('statApplied'), applications.length);
+      countUp(document.getElementById('statExams'), exams);
+      countUp(document.getElementById('statResults'), results);
+      countUp(document.getElementById('statNew'), newCircs);
+    }
+
+    
+    function updateStatus(i, val) {
+      let applications = JSON.parse(localStorage.getItem('myApplications')) || [];
+      
+      if (val === 'Delete Application') {
+        const confirmDelete = confirm(`Are you sure you want to delete "${applications[i].uni}" application?`);
+        if (confirmDelete) {
+          applications.splice(i, 1);
+          localStorage.setItem('myApplications', JSON.stringify(applications));
+          renderTracker();
+        } else {
+          renderTracker(); 
+        }
+        return;
+      }
+
+      applications[i].status = val;
+      localStorage.setItem('myApplications', JSON.stringify(applications));
+      renderTracker();
+    }
+
+    
+    renderTracker();
+  </script>
+  
+</body>
+</html>
