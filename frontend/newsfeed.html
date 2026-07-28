@@ -30,6 +30,7 @@
       <li><a href="profile.html"><span class="s-icon">👤</span><span class="s-label">Profile</span></a></li>
       <li><a href="newsfeed.html" class="active"><span class="s-icon">📰</span><span class="s-label">Newsfeed</span></a></li>
       <li><a href="dashboard.html"><span class="s-icon">📊</span><span class="s-label">Dashboard</span></a></li>
+      <li><a href="ai.html"><span class="s-icon">🤖</span><span class="s-label">AI Assistant</span></a></li>
       <li><a href="settings.html"><span class="s-icon">⚙️</span><span class="s-label">Settings</span></a></li>
     </ul>
   </div>
@@ -109,6 +110,7 @@
         const first = uni.admission[0] || {};
         const status = first.status || 'Unknown';
         const logo = `image/${uni.short.toLowerCase()}.png`;
+        
         return `
           <div class="uni-card" id="uc-${i}">
             <div class="uni-card-header">

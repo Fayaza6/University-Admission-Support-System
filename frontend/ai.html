@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant - University Admission Support System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>if(localStorage.getItem('theme')==='dark'){document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('dark-mode'));}</script>
+  <script type="module" src="avatar.js"></script>
+  
+  <style>
+    .chat-container {
+      width: 100%;
+      height: calc(100vh - 140px); 
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .chat-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-navbar">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+      <span class="nav-brand">Admission Support System</span>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-icon-btn">🔔</a>
+      <a href="profile.html" class="nav-avatar">👤</a>
+      <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('isLoggedIn')">⎋ Logout</a>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="preference.html"><span class="s-icon">🎯</span><span class="s-label">Preferences</span></a></li>
+      <li><a href="profile.html"><span class="s-icon">👤</span><span class="s-label">Profile</span></a></li>
+      <li><a href="newsfeed.html"><span class="s-icon">📰</span><span class="s-label">Newsfeed</span></a></li>
+      <li><a href="dashboard.html"><span class="s-icon">📊</span><span class="s-label">Dashboard</span></a></li>
+      <li><a href="ai.html" class="active"><span class="s-icon">🤖</span><span class="s-label">AI Assistant</span></a></li>
+      <li><a href="settings.html"><span class="s-icon">⚙️</span><span class="s-label">Settings</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content" id="mainContent">
+
+    <div class="page-header">
+      <h2>AI Admission Assistant</h2>
+    </div>
+
+
+    <div class="chat-container">
+      <iframe 
+        src="https://chat-bot-project-1-7u5q.onrender.com/" 
+        class="chat-iframe"
+        title="AI Chatbot Assistant"
+        allow="microphone; camera">
+      </iframe>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('mainContent').classList.toggle('expanded');
+    }
+  </script>
+  
+</body>
+</html>
